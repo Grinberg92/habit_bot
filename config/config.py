@@ -10,5 +10,13 @@ class DBSettings(BaseSettings):
     class Config:
         env_file = '.env'
         extra = 'ignore'
+        
+class BotSettings(BaseSettings):
+    BOT_TOKEN: str
+    
+    class Config:
+        env_file = '.env'
+        extra = 'ignore'        
 
-settings = DBSettings()
+db_settings = DBSettings()
+bot_settings = BotSettings()

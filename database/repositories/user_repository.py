@@ -2,13 +2,6 @@ from database.connection import pool
 
 class UserRepository:
     def create_user(self, telegram_id: int, username: str):
-        user = self.get_user_by_telegram_id(telegram_id)
-
-        if user:
-            print(f"Already exist")
-            return 
-        
-        pool.open()
 
         with pool.connection() as conn:
             with conn.cursor() as cursor:
@@ -19,12 +12,8 @@ class UserRepository:
                     """,
                     params=(telegram_id, username,)
                 )
-                print(f"Add user {username}")
-
 
     def get_user_by_telegram_id(self, telegram_id: int):
-
-        pool.open()
 
         with pool.connection() as conn:
             with conn.cursor() as cursor:
@@ -38,13 +27,9 @@ class UserRepository:
                 )
                 row = cursor.fetchone()
 
-                if row is not None:
-                    print(f"Get user {row}")
         return row
     
     def delete_user_by_telegram_id(self, telegram_id: int):
-
-        pool.open()
 
         with pool.connection() as conn:
             with conn.cursor() as cursor:
@@ -55,10 +40,12 @@ class UserRepository:
                     """,
                     params=(telegram_id,)
                 )
+                
+                deleted_rows = cursor.rowcount
+                
+        return deleted_rows
 
     def update_username_by_telegram_id(self, telegram_id: int, username: str):
-
-        pool.open()
 
         with pool.connection() as conn:
             with conn.cursor() as cursor:
@@ -70,4 +57,4 @@ class UserRepository:
                     """,
                     params=(username, telegram_id,)
                 )
-                print(f"User {telegram_id} has updated name {username}")
+

@@ -1,22 +1,18 @@
+import asyncio
+from aiogram import Bot, Dispatcher
 from database.connection import pool
-from database.repositories.user_repository import UserRepository
+from bot.routers import setup_routers
+from config.config import db_settings, bot_settings
 
-def main():
-    with pool.connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute('SELECT version();')
-            print(f"🔍 autocommit = {conn.autocommit}") 
-            version = cur.fetchone()
 
-            print(version)
-
-    conn.close()
-
-def main2():
-    # UserRepository().create_user('55555', 'sveta')
-    # UserRepository().delete_user_by_telegram_id('55555')
-    # UserRepository().get_user_by_telegram_id('11111')
-    UserRepository().update_username_by_telegram_id('4444', 'sasha')
+async def main():
+    bot = Bot(token=bot_settings.BOT_TOKEN)
+    
+    dp = Dispatcher()
+    
+    dp.include_routers(setup_routers())
+    
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    main2() 
+    asyncio.run(main())
