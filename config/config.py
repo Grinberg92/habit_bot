@@ -18,5 +18,14 @@ class BotSettings(BaseSettings):
         env_file = '.env'
         extra = 'ignore'        
 
+class LogSettings(BaseSettings):
+    LOG_LEVEL: str
+    LOG_FORMAT: str
+
+    class Config:
+        env_file = '.env'
+        extra = 'ignore'
+
 db_settings = DBSettings()
 bot_settings = BotSettings()
+log_settings = LogSettings()

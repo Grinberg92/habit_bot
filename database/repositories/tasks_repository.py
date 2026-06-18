@@ -2,23 +2,27 @@ from database.connection import pool
 
 class TaskRepository:
     
-    def create_task(self, user_id: int, title: str) -> None:
+    async def create_task(self, user_id: int, title: str) -> None:
         
-        with pool.connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
+        async with pool.connection() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
                     query="""
                         INSERT INTO tasks (user_id, title)
-                        VALUES (%s, %s);
+                        VALUES (%s, %s)
+                        RETURNING id;
                     """,
                     params=(user_id, title,)
                 )
+                row = await cursor.fetchone()
+
+                return row[0] if row else None
                 
-    def get_tasks_by_user(self, user_id: int) -> tuple:
+    async def get_tasks_by_user(self, user_id: int) -> tuple:
         
-        with pool.connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
+        async with pool.connection() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
                     query="""
                         SELECT *
                         FROM tasks
@@ -27,15 +31,15 @@ class TaskRepository:
                     params=(user_id, )
                 )
                 
-                row = cursor.fetchall()
+                row = await cursor.fetchall()
                 
         return row
     
-    def delete_task(self, task_id: int) -> int:
+    async def delete_task(self, task_id: int) -> int:
         
-        with pool.connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
+        async with pool.connection() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
                     query="""
                         DELETE FROM tasks
                         WHERE id = %s;
@@ -47,11 +51,11 @@ class TaskRepository:
                 
         return deleted_rows
     
-    def mark_done(self, task_id: int, is_done: bool):
+    async def mark_done(self, task_id: int, is_done: bool):
         
-        with pool.connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
+        async with pool.connection() as conn:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
                     query="""
                         UPDATE tasks
                         SET is_done = %s
