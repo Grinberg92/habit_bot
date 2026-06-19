@@ -1,27 +1,12 @@
 from aiogram import BaseMiddleware
 from typing import Any, Callable, Awaitable
 from services.user_service import UserService
+from services.task_service import TaskService
+from database.repositories.tasks_repository import TaskRepository
+from database.repositories.user_repository import UserRepository
+from psycopg import AsyncConnection
 
-class UserServicesMiddleware(BaseMiddleware):
-
-    def __init__(self, user_service: UserService):
-        self.user_service = user_service
-
-    async def __call__(self,
-                handler: Callable[
-                        [Any, dict[str, Any]],
-                        Awaitable[Any]],
-                event: Any,
-                data: dict[str, Any]
-                ):
-        data['user_service'] = self.user_service
-
-        return await handler(event, data)
-
-class TaskServicesMiddleware(BaseMiddleware):
-
-    def __init__(self, task_service: UserService):
-        self.task_service = task_service
+class ServicesMiddleware(BaseMiddleware):
 
     async def __call__(self,
                 handler: Callable[
@@ -30,6 +15,9 @@ class TaskServicesMiddleware(BaseMiddleware):
                 event: Any,
                 data: dict[str, Any]
                 ):
-        data['task_service'] = self.task_service
+        
+        conn = data['conn']
+        data['user_service'] = UserService(user_repo=UserRepository(conn))
+        data['task_service'] = TaskService(task_repo=TaskRepository(conn))
 
         return await handler(event, data)

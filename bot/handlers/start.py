@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart
 from aiogram.types import Message
 from services.user_service import UserService
 import logging
@@ -12,14 +12,14 @@ start_router = Router()
 async def cmd_start(message: Message, user_service: UserService) -> None:
     
     try:
-        result = await user_service.register_user(telegram_id=message.from_user.id, username=message.from_user.username)
+        user = await user_service.register_user(telegram_id=message.from_user.id, username=message.from_user.username)
 
-        if result:
+        if user:
             await message.answer(f"You were registred")
 
         else:
             await message.answer(f"You have already registred in base")
 
     except Exception as e:
-        logger.critical(f"Error {e}")
+        logger.exception(f"Error {e}")
         await message.answer(f"Error on registration")

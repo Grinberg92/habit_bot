@@ -26,6 +26,18 @@ class LogSettings(BaseSettings):
         env_file = '.env'
         extra = 'ignore'
 
+class RedisSettins(BaseSettings):
+    REDIS_DATABASE: int
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_USERNAME: str
+    REDIS_PASSWORD: int
+
+    class Config:
+        env_file = '.env'
+        extra = 'ignore'
+
 db_settings = DBSettings()
 bot_settings = BotSettings()
 log_settings = LogSettings()
+redis_settings = RedisSettins()
