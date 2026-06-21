@@ -17,7 +17,7 @@ class UserRepository:
                 """,
                 params=(telegram_id, username,)
             )
-            row = cursor.fetchone()
+            row = await cursor.fetchone()
 
             return User.from_row(row) if row else None
 

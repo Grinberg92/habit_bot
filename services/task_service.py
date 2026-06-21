@@ -18,9 +18,11 @@ class TaskService:
         logger.info(f"Task {title} has created. Task id - {task.id}")
         return task
     
-    async def get_tasks(self, user_id: int) -> tuple[Task]:
+    async def get_tasks_by_user(self, user_id: int, page: int = 1, limit: int = 5) -> tuple[Task]:
+
+        offset = (page - 1) * limit
         
-        tasks= await self.task_repo.get_tasks_by_user(user_id)
+        tasks= await self.task_repo.get_tasks_by_user(user_id=user_id, limit=limit, offset=offset)
         
         logger.info(f"Tasks from user {user_id} - {tasks}")
         

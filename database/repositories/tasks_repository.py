@@ -22,21 +22,24 @@ class TaskRepository:
 
             return Task.from_row(row) if row else None
                 
-    async def get_tasks_by_user(self, user_id: int) -> tuple[Task]:
+    async def get_tasks_by_user(self, user_id: int, limit: int, offset: int) -> tuple[Task]:
+
         
         async with self.conn.cursor() as cursor:
             await cursor.execute(
                 query="""
-                    SELECT *
-                    FROM tasks
-                    WHERE user_id = %s;
-                """,
-                params=(user_id, )
+                        SELECT *
+                        FROM tasks
+                        WHERE user_id = %s
+                        ORDER BY id DESC
+                        LIMIT %s OFFSET %s;
+                    """,
+                params=(user_id, limit, offset,)
             )
             
             rows = await cursor.fetchall()
             
-            return tuple(Task.from_row(row) for row in rows)
+            return tuple(Task.from_row(row) for row in rows) 
     
     async def get_task_by_id(self, task_id: int) -> Task:
 
