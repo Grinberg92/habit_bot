@@ -19,7 +19,7 @@ class UserRepository:
             )
             row = await cursor.fetchone()
 
-            return User.from_row(row) if row else None
+            return User.from_row(row)
 
     async def get_user_by_telegram_id(self, telegram_id: int) -> User:
 
@@ -33,7 +33,7 @@ class UserRepository:
             )
             row = await cursor.fetchone()
 
-            return User.from_row(row) if row else None
+            return User.from_row(row)
     
     async def delete_user_by_telegram_id(self, telegram_id: int) -> int:
 

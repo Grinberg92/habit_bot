@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 import logging
 from aiogram import Bot, Dispatcher
 from database.connection import pool
@@ -8,6 +9,7 @@ from bot.middlewares.services import ServicesMiddleware
 from bot.middlewares.database import DatabaseMiddleware
 from aiogram.fsm.storage.redis import RedisStorage
 from core.redis import redis
+from core.scheduler import scheduler
 
 async def main():
 
@@ -27,6 +29,8 @@ async def main():
         dp.update.middleware(middleware=ServicesMiddleware())
         
         dp.include_routers(setup_routers())
+
+        scheduler.start()
         
         await dp.start_polling(bot)
 

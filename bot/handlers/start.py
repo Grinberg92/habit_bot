@@ -23,3 +23,5 @@ async def cmd_start(message: Message, user_service: UserService) -> None:
     except Exception as e:
         logger.exception(f"Error {e}")
         await message.answer(f"Error on registration")
+
+

@@ -20,7 +20,7 @@ class TaskRepository:
             )
             row = await cursor.fetchone()
 
-            return Task.from_row(row) if row else None
+            return Task.from_row(row)
                 
     async def get_tasks_by_user(self, user_id: int, limit: int, offset: int) -> tuple[Task]:
 
@@ -54,7 +54,7 @@ class TaskRepository:
             )
             row = await cursor.fetchone()
 
-            return Task.from_row(row) if row else None
+            return Task.from_row(row)
     
     async def delete_task(self, task_id: int) -> int:
         

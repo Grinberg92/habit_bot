@@ -4,7 +4,8 @@ from services.user_service import UserService
 from services.task_service import TaskService
 from database.repositories.tasks_repository import TaskRepository
 from database.repositories.user_repository import UserRepository
-from psycopg import AsyncConnection
+from database.repositories.habits_repository import HabitRepository
+from services.habit_service import HabitService
 
 class ServicesMiddleware(BaseMiddleware):
 
@@ -19,5 +20,6 @@ class ServicesMiddleware(BaseMiddleware):
         conn = data['conn']
         data['user_service'] = UserService(user_repo=UserRepository(conn))
         data['task_service'] = TaskService(task_repo=TaskRepository(conn))
+        data['habit_service'] = HabitService(habit_repo=HabitRepository(conn))
 
         return await handler(event, data)
