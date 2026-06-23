@@ -18,7 +18,7 @@ class HabitRepository:
             )
             row = await cursor.fetchone()
 
-            return Habit.from_row(row=row)
+            return Habit.from_row(row=row) if row else None
 
     async def get_habits_by_user(self, user_id: int) -> tuple[Habit]:
         async with self.conn.cursor() as cursor:
@@ -33,3 +33,48 @@ class HabitRepository:
             rows = await cursor.fetchall()
 
             return tuple(Habit.from_row(row=row) for row in rows)
+
+    async def get_habit_by_id(self, habit_id: int) -> Habit | None:
+
+        async with self.conn.cursor() as cursor:
+
+            await cursor.execute(
+                """
+                SELECT *
+                FROM habits
+                WHERE id = %s;
+                """,
+                (habit_id,)
+            )
+
+            row = await cursor.fetchone()
+
+            return Habit.from_row(row) if row else None
+        
+    async def get_active_habits(self) -> tuple[Habit]:
+        async with self.conn.cursor() as cursor:
+            await cursor.execute(
+                query="""
+                        SELECT *
+                        FROM habits
+                        WHERE is_active = true;
+                """
+            )
+            rows = await cursor.fetchall()
+
+            return tuple(Habit.from_row(row=row) for row in rows)
+        
+    async def delete_habit(self, habit_id: int) -> int:
+        async with self.conn.cursor() as cursor:
+            await cursor.execute(
+                query="""
+                        DELETE FROM habits
+                        WHERE id = %s;
+                """,
+                params=(habit_id,)
+            )
+            
+            delete_rows = cursor.rowcount
+
+            return delete_rows
+        

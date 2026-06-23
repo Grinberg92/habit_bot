@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 import logging
 from aiogram import Bot, Dispatcher
 from database.connection import pool
@@ -10,6 +9,7 @@ from bot.middlewares.database import DatabaseMiddleware
 from aiogram.fsm.storage.redis import RedisStorage
 from core.redis import redis
 from core.scheduler import scheduler
+from services.schaduler_service import SchedulerService
 
 async def main():
 
@@ -23,6 +23,8 @@ async def main():
         bot = Bot(token=bot_settings.BOT_TOKEN)
         
         dp = Dispatcher(storage=storage)
+
+        await SchedulerService.load_habits(bot=bot)
 
         dp.update.middleware(middleware=DatabaseMiddleware())
 
