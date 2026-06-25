@@ -28,11 +28,11 @@ class SchedulerService:
 
             for habit in habits:
 
-                __class__.add_habit_job(bot, habit)
+                SchedulerService.add_habit_job(bot, habit, habit_service)
                 logger.info(f"loaded habit {habit.id}")
 
     @staticmethod
-    def add_habit_job(bot: Bot, habit: Habit) -> None:
+    def add_habit_job(bot: Bot, habit: Habit, habit_service: HabitService) -> None:
 
         scheduler.add_job(
             send_reminder,
@@ -41,12 +41,17 @@ class SchedulerService:
             minute=habit.reminder_time.minute,
             kwargs={
                 "bot": bot,
-                "user_id": habit.user_id,
-                "text": habit.title
+                "habit_id": habit.id,
+                "habit_service": habit_service
                 },
             id=f"habit_{habit.id}",
             replace_existing=True
         ) 
+        logger.info(
+            "Added habit job habit_%s at %s",
+            habit.id,
+            habit.reminder_time
+        )
 
     @staticmethod
     def delete_job(habit_id: int) -> None:
@@ -62,3 +67,10 @@ class SchedulerService:
             logger.info(
                 f"Removed job {job_id}"
             )
+
+    @staticmethod
+    def reschedule_job(bot: Bot, habit: Habit, habit_service: HabitService) -> None:
+
+        SchedulerService.delete_job(habit_id=habit.id)
+
+        SchedulerService.add_habit_job(bot=bot, habit=habit, habit_service=habit_service)

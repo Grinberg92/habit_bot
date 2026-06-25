@@ -15,6 +15,13 @@ logger = logging.getLogger(__name__)
 
 tasks_router = Router()
 
+@tasks_router.message(Command(commands='cancel'), StateFilter(TaskSG.input_task))
+async def process_cancel_cmd(message: Message, state: FSMContext) -> None:
+
+    await state.clear()
+
+    await message.answer("Operation was canceled")
+
 @tasks_router.message(Command(commands='add_task'))
 async def cmd_add_task(message: Message, state:FSMContext) -> None:
     await message.answer('Input task name:')

@@ -26,7 +26,7 @@ class UserService:
         
         await self.user_repo.update_username_by_telegram_id(telegram_id, username)
         
-        logger.info(F"User {telegram_id} has updated")
+        logger.info(f"User {telegram_id} has updated")
         
         return True
     
@@ -36,8 +36,8 @@ class UserService:
         
         if deleted_row:
             logger.info(F"User {telegram_id} has deleted")
+            return True
             
         else:
-            logger.info(deleted_row)
-        
-        return True
+            logger.info(f"User {telegram_id} was not deleted")
+            return False

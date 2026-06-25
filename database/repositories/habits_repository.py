@@ -63,6 +63,19 @@ class HabitRepository:
             rows = await cursor.fetchall()
 
             return tuple(Habit.from_row(row=row) for row in rows)
+
+    async def set_active_habit(self, habit_id: int, is_active: bool) -> int:
+        async with self.conn.cursor() as cursor:
+            await cursor.execute(
+                query="""
+                        UPDATE habits
+                        SET is_active = %s
+                        WHERE id = %s;
+                """,
+                params=(is_active, habit_id,)
+            )
+
+            return cursor.rowcount
         
     async def delete_habit(self, habit_id: int) -> int:
         async with self.conn.cursor() as cursor:
@@ -77,4 +90,31 @@ class HabitRepository:
             delete_rows = cursor.rowcount
 
             return delete_rows
+        
+    async def update_habit_title(self, habit_id: int, title: str) -> int:
+        async with self.conn.cursor() as cursor:
+            await cursor.execute(
+                query="""
+                        UPDATE habits
+                        SET title = %s
+                        WHERE id = %s;
+                """,
+                params=(title, habit_id,)
+            )
+
+            return cursor.rowcount
+        
+    async def update_habit_time(self, habit_id: int, time: str) -> int:
+        async with self.conn.cursor() as cursor:
+            await cursor.execute(
+                query="""
+                        UPDATE habits
+                        SET reminder_time = %s
+                        WHERE id = %s;
+                """,
+                params=(time, habit_id,)
+            )
+
+            return cursor.rowcount
+        
         

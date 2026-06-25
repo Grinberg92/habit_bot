@@ -1,5 +1,4 @@
 import logging
-from aiogram import Bot
 from database.repositories.habits_repository import HabitRepository
 from database.models.habits import Habit
 
@@ -16,11 +15,7 @@ class HabitService:
 
         if not habit:
             return None
-        
-        logger.info(
-            f"Habit {habit.title} created"
-        )      
-
+      
         return habit
     
     async def get_habit_by_user(self, user_id: int) -> tuple[Habit]:
@@ -31,13 +26,21 @@ class HabitService:
 
     async def get_habit_by_id(self, habit_id:int) -> Habit | None:
 
-        return await self.habit_repo.get_habit_by_id(habit_id)
+        habit = await self.habit_repo.get_habit_by_id(habit_id)
 
+        return habit
+    
     async def get_active_habits(self) -> tuple[Habit]:
 
         habits = await self.habit_repo.get_active_habits()
 
         return habits
+
+    async def set_active_habit(self, habit_id: int, is_active: bool) -> bool:
+
+        updated = await self.habit_repo.set_active_habit(habit_id=habit_id, is_active=is_active)
+        
+        return updated > 0
     
     async def delete_habit(self, habit_id:int) -> bool:
 
@@ -45,10 +48,19 @@ class HabitService:
 
 
         if deleted:
-            logger.info(
-                f"Habit {habit_id} deleted"
-            )
             return True
 
 
         return False
+    
+    async def update_habit_title(self, habit_id: int, title: str) -> bool:
+
+        updated = await self.habit_repo.update_habit_title(habit_id=habit_id, title=title)
+        
+        return updated > 0
+    
+    async def update_habit_time(self, habit_id: int, time: str) -> bool:
+
+        updated = await self.habit_repo.update_habit_time(habit_id=habit_id, time=time)
+        
+        return updated > 0
